@@ -1,23 +1,25 @@
 import logo from './logo.svg';
 import './App.css';
 import { ExpandMore } from '@material-ui/icons';
-import { Accordion, AccordionSummary, AccordionDetails } from '@material-ui/core';
+import { Accordion, AccordionSummary, AccordionDetails, AppBar, IconButton, Button, Toolbar, Typography } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { firebaseConfig } from "./firebaseConfig"
 import firebase from 'firebase/app';
 import "firebase/firestore";
 import { Pagination } from '@material-ui/lab'
-
-firebase.initializeApp(firebaseConfig);
+import AppBarComponent from './Appbar'
+if(!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app()
+}
 var db = firebase.firestore()
 
 function App() {
   const [loaded, setLoaded] = useState(false)
   const [firebaseData, setFirebaseData] = useState([""])
   const [expandedPanel, setExpandedPanel] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(10);
-  const [pageNumber] = useState()
   const [page, setPage] = useState(1)
   const handleAccordionChange = (number) => (event, isExpanded) => {
     console.log({ event, isExpanded });
@@ -42,17 +44,12 @@ function App() {
 
   useEffect(() => {
     parseData(db)
-
   }, []);
 
   const handleChange = (event, value) => {
     setPage(value);
   };
   
-  // const paginate = (page) => {
-  //   setLoaded(true) 
-  //   setCurrentPage(page);
-  // }
   const indexOfLastPost = page * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const accordionObject = [firebaseData][0]
@@ -66,23 +63,19 @@ function App() {
       {data.Body}
     </AccordionDetails>
     </Accordion>)
-  }
-  )
+  })
 
   return (
-    <div className="App">
-      <header className="App-header">
-      <div style={{width:"50%"}}>
+    <div className="App" style={{backgroundColor:"grey", height:"100vh"}}>
+      <AppBarComponent/>
+      <div style={{width:"80%", margin:"20px", flexDirection:"column", display:"flex"}}>
+      <div style={{alignItems:"center"}}>
       {loaded ? listAccordian : null} 
-      <Pagination color='primary' page={page} count={Math.ceil(firebaseData.length / postsPerPage)} onChange={handleChange}/>
+      <Pagination style={{backgroundColor:"white"}} shape="rounded" color="secondary" variant="outline" page={page} count={Math.ceil(firebaseData.length / postsPerPage)} onChange={handleChange}/>
       </div>
-      
-      </header>
+      </div>
     </div>
   );
 }
 
 export default App;
-// <Pagination postsPerPage={postsPerPage}
-// totalPosts={firebaseData.length}
-// paginate={paginate}/>
