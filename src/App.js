@@ -28,7 +28,7 @@ function App() {
 
   const parseData = (db) => {
     const dataArray = [];
-    const snapshot = db.collection('emails').get();
+    const snapshot = db.collection('emails').orderBy("Date", "desc").get();
        snapshot.then(
         (querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -61,17 +61,19 @@ function App() {
     <AccordionSummary expandIcon={<ExpandMore />}>{data.Subject}</AccordionSummary>
     <AccordionDetails style={{display:"flex", "word-break":"break-word"}}>
       {data.Body}
+      <br/>
+      Email sent on : {data.Date}
     </AccordionDetails>
     </Accordion>)
   })
 
   return (
-    <div className="App" style={{backgroundColor:"grey", height:"100vh"}}>
+    <div className="App" style={{backgroundColor:"grey", height:"100%"}}>
       <AppBarComponent/>
       <div style={{width:"80%", margin:"20px", flexDirection:"column", display:"flex"}}>
       <div style={{alignItems:"center"}}>
       {loaded ? listAccordian : null} 
-      <Pagination style={{backgroundColor:"white"}} shape="rounded" color="secondary" variant="outline" page={page} count={Math.ceil(firebaseData.length / postsPerPage)} onChange={handleChange}/>
+      <Pagination style={{backgroundColor:"white", marginTop:"10px"}} shape="rounded" color="secondary" variant="outline" page={page} count={Math.ceil(firebaseData.length / postsPerPage)} onChange={handleChange}/>
       </div>
       </div>
     </div>
