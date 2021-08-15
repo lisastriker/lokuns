@@ -25,19 +25,26 @@ function App() {
     console.log({ event, isExpanded });
     setExpandedPanel(isExpanded ? number : false);
   };
-
+  
   const parseData = (db) => {
-    const dataArray = [];
+   const dataArray = [];
     const snapshot = db.collection('emails').orderBy("Date", "desc").get();
        snapshot.then(
         (querySnapshot) => {
+            var jobId = 1000
             querySnapshot.forEach((doc) => {
-                const document = { ...doc.data(), id: doc.id };
+                jobId =  jobId + 1
+                const document = { ...doc.data(), id: doc.id, jobId:jobId};
                 dataArray.push(document)
+
             });//--> resolve when data is ready
         },
       ).then(()=> {
-      setFirebaseData(dataArray)
+      const newArray = dataArray.map(item => {
+        const sanitize = item.Body.replaceAll('a', 'Yo')
+        return { Body: sanitize, id:item.id, jobId: item.jobId, Email: item.Email, Date: item.Date, Subject: item.Subject}
+      })
+      setFirebaseData(newArray)
       setLoaded(true)
       })
   };
@@ -49,7 +56,7 @@ function App() {
   const handleChange = (event, value) => {
     setPage(value);
   };
-  
+
   const indexOfLastPost = page * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const accordionObject = [firebaseData][0]
@@ -58,7 +65,14 @@ function App() {
   const listAccordian = slice.map(data => {
     return(        
     <Accordion expanded={expandedPanel === data.id} onChange={handleAccordionChange(data.id)}>
-    <AccordionSummary expandIcon={<ExpandMore />}>{data.Subject}</AccordionSummary>
+    <AccordionSummary expandIcon={<ExpandMore />}>
+      <Typography style={{fontWeight:"bold"}}>
+      Job ID:{data.jobId}
+    </Typography>
+    &nbsp;
+    <Typography> {data.Subject}</Typography>
+    </AccordionSummary>
+
     <AccordionDetails style={{display:"flex", "word-break":"break-word"}}>
       {data.Body}
       <br/>
