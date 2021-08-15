@@ -16,52 +16,41 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore()
 
 function App() {
-  const [firebaseData, setFirebaseData] = useState("")
+  const [firebaseData, setFirebaseData] = useState([""])
   const [expandedPanel, setExpandedPanel] = useState(false);
-  const [docId, setDocId] = useState("")
-  const [combinedData, setCombinedData] = useState("")
+  const [loaded, setLoaded] = useState(false)
   const handleAccordionChange = (number) => (event, isExpanded) => {
     console.log({ event, isExpanded });
     setExpandedPanel(isExpanded ? number : false);
   };
 
+  const parseData = (db) => {
+    const dataArray = [];
+    const snapshot = db.collection('emails').get();
+       snapshot.then(
+        (querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const document = { ...doc.data(), id: doc.id };
+                dataArray.push(document)
+            });//--> resolve when data is ready
+        },
+      ).then(()=> {
+      setFirebaseData(dataArray)
+      setLoaded(true)
+      })
+  };
+
   useEffect(() => {
-    const parseData = async (db) => {
-      const snapshot = db.collection('emails').get();
-      return new Promise(resolve => {
-         snapshot.then(
-          (querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                  const document = { ...doc.data(), id: doc.id };
-                  setFirebaseData(document)
-              });//--> resolve when data is ready
-          },
-      );
-      })   
-    };
     parseData(db)
-    // db.collection("emails").get().then((querySnapshot) => {
-    //   querySnapshot.forEach((doc) => {
-    //       setFirebaseData(JSON.stringify(doc.data()))
-    //       setDocId(doc.id)
-    //       console.log(JSON.stringify(doc.data()))
-    //       console.log(JSON.stringify(doc.id))
-    //       console.log(firebaseData)
-    //       console.log(docId)
-    //       setCombinedData({ firebaseData, docId: docId })
-    //       setFirebaseData("")
-    //       setDocId("")
-    //   });
-    // });
   }, []);
   
-  const accordionObject = [firebaseData]
+  const accordionObject = [firebaseData][0]
   console.log(accordionObject)
   const listAccordion =  accordionObject.map( data => 
-    <Accordion expanded={expandedPanel === data.number} onChange={handleAccordionChange(data.number)}>
-    <AccordionSummary expandIcon={<ExpandMore />}>{data.title}</AccordionSummary>
-    <AccordionDetails>
-      {data.detail}
+    <Accordion expanded={expandedPanel === data.id} onChange={handleAccordionChange(data.id)}>
+    <AccordionSummary expandIcon={<ExpandMore />}>{data.Subject}</AccordionSummary>
+    <AccordionDetails style={{display:"flex", "word-break":"break-word"}}>
+      {data.Body}
     </AccordionDetails>
     </Accordion>)
 
@@ -70,7 +59,7 @@ function App() {
     <div className="App">
       <header className="App-header">
       <div style={{width:"50%"}}>
-      {listAccordion} 
+      {loaded ? listAccordion : null} 
       </div>
       </header>
     </div>
