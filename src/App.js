@@ -8,6 +8,7 @@ import firebase from 'firebase/app';
 import "firebase/firestore";
 import { Pagination } from '@material-ui/lab'
 import AppBarComponent from './Appbar'
+
 if(!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 } else {
@@ -41,8 +42,15 @@ function App() {
         },
       ).then(()=> {
       const newArray = dataArray.map(item => {
-        const sanitize = item.Body.replaceAll('a', 'Yo')
-        return { Body: sanitize, id:item.id, jobId: item.jobId, Email: item.Email, Date: item.Date, Subject: item.Subject}
+        const stringRequest1 = /(You received this message because you are subscribed to the Google Groups "LocumSg" group.).*/g
+        const stringRequest2 = /(To unsubscribe from this group and stop receiving emails from it, send an email to locumsg\+unsubscribe@googlegroups.com.).*/g
+        const stringRequest3 = /(To view this discussion on the web visit).*/g
+        const stringRequest4 = /\r?\n\r/g
+        const sanitize = item.Body.replaceAll(stringRequest1, '')
+        const sanitize2 = sanitize.replaceAll(stringRequest2, '')
+        const sanitize3 = sanitize2.replaceAll(stringRequest3, '')
+        const sanitize4 = sanitize3.replaceAll(stringRequest4, '')
+        return { Body: sanitize4, id:item.id, jobId: item.jobId, Email: item.Email, Date: item.Date, Subject: item.Subject}
       })
       setFirebaseData(newArray)
       setLoaded(true)
@@ -73,10 +81,10 @@ function App() {
     <Typography> {data.Subject}</Typography>
     </AccordionSummary>
 
-    <AccordionDetails style={{display:"flex", "word-break":"break-word"}}>
-      {data.Body}
+    <AccordionDetails style={{display:"flex", "word-break":"break-word", "flex-direction":"column"}}>
+      <Typography style={{whiteSpace: 'pre-line'}}>{data.Body}</Typography>
       <br/>
-      Email sent on : {data.Date}
+      <Typography>Email sent on : {data.Date}</Typography>
     </AccordionDetails>
     </Accordion>)
   })
