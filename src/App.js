@@ -8,7 +8,8 @@ import firebase from 'firebase/app';
 import "firebase/firestore";
 import { Pagination } from '@material-ui/lab'
 import AppBarComponent from './Appbar'
-
+import { Route, Switch, Redirect, Link, BrowserRouter as Router } from 'react-router-dom';
+import User from './User'
 if(!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 } else {
@@ -29,7 +30,7 @@ function App() {
   
   const parseData = (db) => {
    const dataArray = [];
-    const snapshot = db.collection('emails').orderBy("Date", "desc").get();
+    const snapshot = db.collection('emails').orderBy("Date", "asc").get();
        snapshot.then(
         (querySnapshot) => {
             var jobId = 1000
@@ -89,16 +90,30 @@ function App() {
     </Accordion>)
   })
 
-  return (
-    <div className="App" style={{backgroundColor:"grey", height:"100%"}}>
-      <AppBarComponent/>
+  function Home() {
+    return (
       <div style={{width:"80%", margin:"20px", flexDirection:"column", display:"flex"}}>
       <div style={{alignItems:"center"}}>
       {loaded ? listAccordian : null} 
       <Pagination style={{backgroundColor:"white", marginTop:"10px"}} shape="rounded" color="secondary" variant="outline" page={page} count={Math.ceil(firebaseData.length / postsPerPage)} onChange={handleChange}/>
       </div>
       </div>
+    )
+  }
+  return (
+    <Router>
+    <div className="App" style={{backgroundColor:"grey", height:"100%"}}>
+      <AppBarComponent/>
+      <Switch>
+      <Route path="/user">
+        <User />
+      </Route>
+      <Route path="/">
+        <Home/>
+      </Route>
+      </Switch>
     </div>
+    </Router>
   );
 }
 

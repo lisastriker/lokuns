@@ -6,6 +6,8 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LokunsLogo from './assets/lokunswhite.png'
+import { Link } from 'react-router-dom'
+import User from './User'
 function AppBarComponent() {
   return (
   <AppBar position="static" style={{"min-width":"400px", backgroundColor:"#1b203c"}}>
@@ -28,13 +30,8 @@ function AppBarComponent() {
           <NotificationsIcon />
         </Badge>
       </IconButton>
-      <IconButton
-        edge="end"
-        aria-label="account of current user"
-        aria-haspopup="true"
-        color="inherit"
-      >
-        <AccountCircleIcon />
+      <IconButton >
+      <Link to="/user"><AccountCircleIcon/></Link>
       </IconButton>
       <IconButton
         aria-label="show more"
@@ -45,7 +42,9 @@ function AppBarComponent() {
       </IconButton>
     </div>
   </Toolbar>
-</AppBar>)
+
+</AppBar>
+)
 }
 
 export default AppBarComponent
