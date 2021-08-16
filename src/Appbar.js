@@ -17,7 +17,7 @@ function AppBarComponent() {
       color="inherit"
       aria-label="open drawer"
     >
-      <img src={LokunsLogo}/>
+      <Link to="/"><img alt="homelogo" src={LokunsLogo}/></Link>
     </IconButton>
     <div style={{marginLeft:"auto"}}>
       <IconButton aria-label="show 4 new mails" color="inherit">

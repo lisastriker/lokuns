@@ -1,3 +1,4 @@
+import SignInForm from './SignInForm'
 const { Typography } = require('@material-ui/core');
 var firebase = require('firebase');
 var firebaseui = require('firebaseui');
@@ -25,7 +26,7 @@ var firebaseui = require('firebaseui');
 //   });
 
 function User(){
-  return <div><Typography>Hello</Typography></div>
+  return <SignInForm></SignInForm>
 }
 
 export default User
