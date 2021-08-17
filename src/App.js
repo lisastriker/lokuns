@@ -33,9 +33,9 @@ function App() {
     const snapshot = db.collection('emails').orderBy('Timestamp', 'desc').get();
        snapshot.then(
         (querySnapshot) => {
-            var jobId = 1000
+          var jobId = 1000
             querySnapshot.forEach((doc) => {
-                jobId =  jobId + 1
+                jobId =  jobId - 1 //Fix bug here
                 const document = { ...doc.data(), id: doc.id, jobId:jobId };
                 console.log(doc.data())
                 dataArray.push(document)
@@ -75,7 +75,7 @@ function App() {
   const slice = accordionObject.slice(indexOfFirstPost, indexOfLastPost)
   const listAccordian = slice.map(data => {
     return(        
-    <Accordion expanded={expandedPanel === data.id} onChange={handleAccordionChange(data.id)}>
+    <Accordion style={{backgroundColor:"#dedede"}} expanded={expandedPanel === data.id} onChange={handleAccordionChange(data.id)}>
     <AccordionSummary expandIcon={<ExpandMore />}>
       <Typography style={{fontWeight:"bold"}}>
       Job ID:{data.jobId}
