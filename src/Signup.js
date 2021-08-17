@@ -2,9 +2,17 @@ import { Typography, FormGroup, InputLabel as InputLabel1, Input as Input1, Form
 import { useState } from 'react';
 import styled from 'styled-components';
 import firebase from '@firebase/app';
+import { useHistory } from 'react-router-dom';
 require('firebase/auth');
 var firebaseui = require('firebaseui');
 require('firebase/auth')
+
+const Type = styled(Typography)`
+  text-align:left;
+  word-wrap: break-word;
+  font-size:0.8em;
+`
+
 const Button = styled(Button1)`
   width:80%;
   background-color:#1B203C;
@@ -22,7 +30,6 @@ const InputLabel = styled(InputLabel1)`
   text-align:center;
   margin-top:10px;
   margin-bottom:40px;
-
 `
 
 
@@ -57,9 +64,7 @@ const Container = styled.div`
 const FormGroupStyled = styled(FormGroup)`
   padding: 50px;
   border: 2px solid black;
-  display:flex
-  justify-content:start;
-  align-items:start;
+  max-width:50%;
 `
 function SignUp(){
 const [email, setEmail] = useState("")
@@ -67,7 +72,8 @@ const [password, setPassword] = useState("")
 const [name, setName] = useState("")
 const [address, setAddress] = useState("")
 const [medical, setMedical] = useState("")
-
+const [errorMessage, setErrorMessage] = useState("")
+const history = useHistory();
 function signUp(email, password){
   console.log("Here")
   firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -75,11 +81,12 @@ function signUp(email, password){
     // Signed in 
     console.log(userCredential.user)
     var user = userCredential.user;
-    
+    history.push("/");
     // ...
   })
   .catch((error) => {
-    console.log(error.code)
+    setErrorMessage(error.message)
+    console.log(error.message)
     var errorCode = error.code;
     var errorMessage = error.message;
     // ..
@@ -88,12 +95,13 @@ function signUp(email, password){
 
   return <MainContainer ><Container><FormGroupStyled>
   <InputLabel htmlFor="my-input">Sign Up</InputLabel>  
-  <Input placeholder="Name" id="my-input" aria-describedby="my-helper-text" value={name} onChange={(event) => setName(event.target.value)}/>
-  <Input placeholder="Address" id="my-input" aria-describedby="my-helper-text" value={address} onChange={(event) => setAddress(event.target.value)}/>
-  <Input placeholder="Email" id="my-input" aria-describedby="my-helper-text" value={email} onChange={(event) => setEmail(event.target.value)}></Input>
-  <Input placeholder="Password" id="my-input" aria-describedby="my-helper-text" value={password} onChange={(event) => setPassword(event.target.value)}/>
-  <Input placeholder="Medical License Number"id="my-input" aria-describedby="my-helper-text" value={medical} onChange={(event) => setMedical(event.target.value)}/>
+  <Input required="true" placeholder="Name" id="my-input" aria-describedby="my-helper-text" value={name} onChange={(event) => setName(event.target.value)}/>
+  <Input required="true" placeholder="Address" id="my-input" aria-describedby="my-helper-text" value={address} onChange={(event) => setAddress(event.target.value)}/>
+  <Input required="true" placeholder="Email" id="my-input" aria-describedby="my-helper-text" value={email} onChange={(event) => setEmail(event.target.value)}></Input>
+  <Input required="true" type="password" placeholder="Password" id="my-input" aria-describedby="my-helper-text" value={password} onChange={(event) => setPassword(event.target.value)}/>
+  <Input required="true" placeholder="Medical License Number"id="my-input" aria-describedby="my-helper-text" value={medical} onChange={(event) => setMedical(event.target.value)}/>
   <Button type="submit" label="submit" onClick={() => signUp(email, password)}>Submit</Button>
+  <Type>{errorMessage}</Type>
   </FormGroupStyled>
   </Container>
   </MainContainer>
