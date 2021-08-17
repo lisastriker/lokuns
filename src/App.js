@@ -30,13 +30,14 @@ function App() {
   
   const parseData = (db) => {
    const dataArray = [];
-    const snapshot = db.collection('emails').orderBy("Date", "asc").get();
+    const snapshot = db.collection('emails').orderBy('Timestamp').get();
        snapshot.then(
         (querySnapshot) => {
             var jobId = 1000
             querySnapshot.forEach((doc) => {
                 jobId =  jobId + 1
-                const document = { ...doc.data(), id: doc.id, jobId:jobId};
+                const document = { ...doc.data(), id: doc.id, jobId:jobId };
+                console.log(doc.data())
                 dataArray.push(document)
 
             });//--> resolve when data is ready
@@ -47,7 +48,8 @@ function App() {
         const stringRequest2 = /(To unsubscribe from this group and stop receiving emails from it, send an email to locumsg\+unsubscribe@googlegroups.com.).*/g
         const stringRequest3 = /(To view this discussion on the web visit).*/g
         const stringRequest4 = /\r?\n\r/g
-        const sanitize = item.Body.replaceAll(stringRequest1, '')
+        const stringBody = String(item.Body)
+        const sanitize = stringBody.replaceAll(stringRequest1, '')
         const sanitize2 = sanitize.replaceAll(stringRequest2, '')
         const sanitize3 = sanitize2.replaceAll(stringRequest3, '')
         const sanitize4 = sanitize3.replaceAll(stringRequest4, '')

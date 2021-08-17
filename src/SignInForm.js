@@ -5,6 +5,7 @@ import * as firebaseui from 'firebaseui'
 function SignInForm(){
 const [email, setEmail] = useState("")
 const [password, setPassword] = useState("")
+
 function signIn(email, password){
   console.log("I'm here")
   firebase.auth().signInWithEmailAndPassword(email, password)
