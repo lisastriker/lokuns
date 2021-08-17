@@ -30,7 +30,7 @@ function App() {
   
   const parseData = (db) => {
    const dataArray = [];
-    const snapshot = db.collection('emails').orderBy('Timestamp').get();
+    const snapshot = db.collection('emails').orderBy('Timestamp', 'desc').get();
        snapshot.then(
         (querySnapshot) => {
             var jobId = 1000
